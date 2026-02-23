@@ -6,6 +6,7 @@ import Hero from "@/components/Hero";
 import Mission from "@/components/Mission";
 import LogoCarousel from "@/components/LogoCarousel";
 import Services from "@/components/Services";
+import About from "@/components/About";
 import ContactCTA from "@/components/ContactCTA";
 import ContactModal from "@/components/ContactModal";
 import Footer from "@/components/Footer";
@@ -30,6 +31,7 @@ export default function Home() {
         <Mission />
         <LogoCarousel />
         <Services />
+        <About />
         <ContactCTA onContactClick={openModal} />
       </main>
       <Footer />

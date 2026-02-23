@@ -16,31 +16,18 @@ const FOCUSABLE =
 function useFocusTrap(isOpen: boolean, ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     if (!isOpen || !ref.current) return;
-
-    const container = ref.current;
-    const elements = Array.from(
-      container.querySelectorAll<HTMLElement>(FOCUSABLE)
-    );
+    const elements = Array.from(ref.current.querySelectorAll<HTMLElement>(FOCUSABLE));
     const first = elements[0];
     const last = elements[elements.length - 1];
-
     first?.focus();
-
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== "Tab") return;
       if (e.shiftKey) {
-        if (document.activeElement === first) {
-          last?.focus();
-          e.preventDefault();
-        }
+        if (document.activeElement === first) { last?.focus(); e.preventDefault(); }
       } else {
-        if (document.activeElement === last) {
-          first?.focus();
-          e.preventDefault();
-        }
+        if (document.activeElement === last) { first?.focus(); e.preventDefault(); }
       }
     }
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, ref]);
@@ -51,59 +38,37 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const triggerRef = useRef<HTMLElement | null>(null);
   const [formState, setFormState] = useState<FormState>("idle");
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    message: "",
-    typeOfWork: "",
-    honeypot: "",
+    name: "", email: "", company: "", message: "", typeOfWork: "", honeypot: "",
   });
 
   useFocusTrap(isOpen, modalRef);
 
-  // Store trigger element and manage body scroll
   useEffect(() => {
     if (isOpen) {
       triggerRef.current = document.activeElement as HTMLElement;
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      // Return focus to trigger after modal closes
       setTimeout(() => triggerRef.current?.focus(), 50);
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  // ESC key handler
   useEffect(() => {
     if (!isOpen) return;
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
 
-  // Reset on close
   useEffect(() => {
     if (!isOpen) {
       setFormState("idle");
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        message: "",
-        typeOfWork: "",
-        honeypot: "",
-      });
+      setFormData({ name: "", email: "", company: "", message: "", typeOfWork: "", honeypot: "" });
     }
   }, [isOpen]);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
@@ -123,8 +88,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   }
 
   const inputClass =
-    "w-full border-2 border-black px-4 py-3 text-sm bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2";
-  const labelClass = "block text-xs font-bold tracking-widest uppercase mb-2";
+    "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/25 focus:outline-none focus:border-white/30 transition-colors duration-200";
+  const labelClass = "block text-xs font-medium tracking-widest uppercase text-white/40 mb-2";
 
   return (
     <AnimatePresence>
@@ -138,7 +103,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/80"
+            className="absolute inset-0"
+            style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
             onClick={onClose}
             aria-hidden="true"
           />
@@ -146,32 +112,34 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           {/* Modal panel */}
           <motion.div
             ref={modalRef}
-            className="relative bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-white/[0.08]"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+            }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
-            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.97 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <div className="p-8 md:p-10">
               {/* Header */}
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h2
-                    id="modal-title"
-                    className="text-lg font-bold tracking-tight"
-                  >
-                    Contact Thinker Maker
+                  <h2 id="modal-title" className="font-display text-white text-2xl leading-snug">
+                    Contact Abe
                   </h2>
-                  <p className="text-sm mt-1">
+                  <p className="text-sm text-white/40 mt-1">
                     Send a quick note and I&rsquo;ll get back to you.
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="ml-6 shrink-0 text-sm font-bold hover:opacity-50 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
+                  className="ml-6 shrink-0 text-white/30 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                   aria-label="Close"
                 >
                   ✕
@@ -179,101 +147,53 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               {formState === "success" ? (
-                <p className="text-base leading-relaxed py-4">
-                  Thanks &mdash; your message has been sent. I&rsquo;ll get back
-                  to you shortly.
+                <p className="text-base text-white/70 leading-relaxed py-6">
+                  Thanks &mdash; your message has been sent. I&rsquo;ll get back to you shortly.
                 </p>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                  {/* Honeypot – hidden from real users */}
+                  {/* Honeypot */}
                   <div
                     aria-hidden="true"
-                    style={{
-                      position: "absolute",
-                      left: "-9999px",
-                      width: "1px",
-                      height: "1px",
-                      overflow: "hidden",
-                    }}
+                    style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
                   >
-                    <input
-                      type="text"
-                      name="honeypot"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={formData.honeypot}
-                      onChange={handleChange}
-                    />
+                    <input type="text" name="honeypot" tabIndex={-1} autoComplete="off"
+                      value={formData.honeypot} onChange={handleChange} />
                   </div>
 
                   <div>
-                    <label htmlFor="name" className={labelClass}>
-                      Name <span aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      autoComplete="name"
-                      className={inputClass}
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
+                    <label htmlFor="name" className={labelClass}>Name <span aria-hidden="true">*</span></label>
+                    <input id="name" name="name" type="text" required autoComplete="name"
+                      className={inputClass} value={formData.name} onChange={handleChange} />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className={labelClass}>
-                      Email <span aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      className={inputClass}
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
+                    <label htmlFor="email" className={labelClass}>Email <span aria-hidden="true">*</span></label>
+                    <input id="email" name="email" type="email" required autoComplete="email"
+                      className={inputClass} value={formData.email} onChange={handleChange} />
                   </div>
 
                   <div>
-                    <label htmlFor="company" className={labelClass}>
-                      Company
-                    </label>
-                    <input
-                      id="company"
-                      name="company"
-                      type="text"
-                      autoComplete="organization"
-                      className={inputClass}
-                      value={formData.company}
-                      onChange={handleChange}
-                    />
+                    <label htmlFor="company" className={labelClass}>Company</label>
+                    <input id="company" name="company" type="text" autoComplete="organization"
+                      className={inputClass} value={formData.company} onChange={handleChange} />
                   </div>
 
                   <div>
-                    <label htmlFor="typeOfWork" className={labelClass}>
-                      Type of Work
-                    </label>
+                    <label htmlFor="typeOfWork" className={labelClass}>Type of Work</label>
                     <div className="relative">
-                      <select
-                        id="typeOfWork"
-                        name="typeOfWork"
+                      <select id="typeOfWork" name="typeOfWork"
                         className={`${inputClass} appearance-none pr-10 cursor-pointer`}
-                        value={formData.typeOfWork}
-                        onChange={handleChange}
+                        value={formData.typeOfWork} onChange={handleChange}
+                        style={{ color: formData.typeOfWork ? "#fafafa" : "rgba(250,250,250,0.25)" }}
                       >
-                        <option value="">Select&hellip;</option>
-                        <option value="Strategy">Strategy</option>
-                        <option value="Experience Design">Experience Design</option>
-                        <option value="AI">AI</option>
-                        <option value="Other">Other</option>
+                        <option value="" style={{ background: "#111", color: "#fafafa" }}>Select&hellip;</option>
+                        <option value="Strategy" style={{ background: "#111", color: "#fafafa" }}>Strategy</option>
+                        <option value="Experience Design" style={{ background: "#111", color: "#fafafa" }}>Experience Design</option>
+                        <option value="AI" style={{ background: "#111", color: "#fafafa" }}>AI</option>
+                        <option value="Other" style={{ background: "#111", color: "#fafafa" }}>Other</option>
                       </select>
-                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs">
-                        ▾
-                      </span>
+                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/30">▾</span>
                     </div>
                   </div>
 
@@ -281,41 +201,32 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     <label htmlFor="message" className={labelClass}>
                       What do you need help with? <span aria-hidden="true">*</span>
                     </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      required
-                      rows={4}
+                    <textarea id="message" name="message" required rows={4}
                       className={`${inputClass} resize-none`}
-                      value={formData.message}
-                      onChange={handleChange}
-                    />
+                      value={formData.message} onChange={handleChange} />
                   </div>
 
                   {formState === "error" && (
-                    <p className="text-sm border-2 border-black p-3">
+                    <p className="text-sm text-white/60 rounded-xl border border-white/10 bg-white/5 p-4">
                       Something went wrong. Please try again or email{" "}
-                      <a
-                        href="mailto:abe@thinkermaker.com.au"
-                        className="underline underline-offset-2"
-                      >
+                      <a href="mailto:abe@thinkermaker.com.au" className="text-white underline underline-offset-2">
                         abe@thinkermaker.com.au
                       </a>
                     </p>
                   )}
 
-                  <div className="flex gap-4 pt-2">
+                  <div className="flex gap-3 pt-2">
                     <button
                       type="submit"
                       disabled={formState === "loading"}
-                      className="border-2 border-black bg-black text-white px-8 py-3.5 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors duration-200 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                      className="rounded-full bg-white text-black px-8 py-3 text-sm font-semibold transition-all duration-200 hover:bg-white/90 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                     >
                       {formState === "loading" ? "Sending…" : "Send"}
                     </button>
                     <button
                       type="button"
                       onClick={onClose}
-                      className="border-2 border-black px-8 py-3.5 text-xs font-bold tracking-widest uppercase hover:bg-black hover:text-white transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                      className="rounded-full border border-white/10 bg-white/5 px-8 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                     >
                       Close
                     </button>

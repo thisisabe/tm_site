@@ -9,60 +9,66 @@ interface HeaderProps {
 export default function Header({ heroInView }: HeaderProps) {
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 px-8 md:px-16 lg:px-24 py-6 flex items-center transition-all duration-300"
-      style={{
-        backgroundColor: heroInView ? "transparent" : "#ffffff",
-        borderBottom: heroInView ? "none" : "2px solid #000000",
-      }}
+      className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5 flex items-center transition-all duration-300"
+      style={
+        heroInView
+          ? { background: "transparent" }
+          : {
+              background: "rgba(8,8,8,0.80)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+            }
+      }
     >
-      {/* Desktop: morphing logo area */}
-      <div className="relative hidden md:block" style={{ height: 32, width: 120 }}>
-        {/* Wordmark – visible when hero is in view */}
+      {/* Desktop: morphing logo */}
+      <div className="relative hidden md:block" style={{ height: 52, width: 192 }}>
+        {/* Wordmark */}
         <div
           className="absolute inset-0 flex items-center transition-all duration-300 ease-in-out"
           style={{
             opacity: heroInView ? 1 : 0,
-            transform: heroInView ? "scale(1)" : "scale(0.85)",
+            transform: heroInView ? "scale(1) translateY(0)" : "scale(0.88) translateY(-4px)",
             pointerEvents: heroInView ? "auto" : "none",
           }}
           aria-hidden={!heroInView}
         >
           <Image
-            src="/TM_wordmark_blk.svg"
+            src="/TM_wordmark_wht.svg"
             alt="Thinker Maker"
-            width={120}
-            height={19}
+            width={192}
+            height={30}
             priority
           />
         </div>
 
-        {/* Venn logomark – visible after scroll */}
+        {/* Venn logomark */}
         <div
           className="absolute inset-0 flex items-center transition-all duration-300 ease-in-out"
           style={{
             opacity: heroInView ? 0 : 1,
-            transform: heroInView ? "scale(0.85)" : "scale(1)",
+            transform: heroInView ? "scale(0.88) translateY(4px)" : "scale(1) translateY(0)",
             pointerEvents: heroInView ? "none" : "auto",
           }}
           aria-hidden={heroInView}
         >
           <Image
-            src="/TM_logomark_blk.svg"
+            src="/TM_logomark_wht.svg"
             alt="Thinker Maker"
-            width={48}
-            height={32}
+            width={64}
+            height={43}
             priority
           />
         </div>
       </div>
 
-      {/* Mobile: always show Venn logomark */}
+      {/* Mobile: always Venn logomark */}
       <div className="md:hidden">
         <Image
-          src="/TM_logomark_blk.svg"
+          src="/TM_logomark_wht.svg"
           alt="Thinker Maker"
-          width={40}
-          height={27}
+          width={50}
+          height={34}
           priority
         />
       </div>
