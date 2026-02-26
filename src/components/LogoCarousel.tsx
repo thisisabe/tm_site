@@ -41,8 +41,7 @@ function LogoItem({ logo }: { logo: Logo }) {
       style={{
         height: "28px",
         width: "auto",
-        filter: "brightness(0) invert(1)",
-        opacity: 0.28,
+        opacity: 0.3,
         userSelect: "none",
         flexShrink: 0,
       }}
@@ -83,7 +82,7 @@ export default function LogoCarousel() {
       className="relative border-y border-white/[0.06] overflow-hidden py-14 md:py-16"
       aria-label="Client logos"
     >
-      <div className="carousel-track items-center gap-16 px-8">
+      <div className="carousel-track items-center gap-24 px-8">
         {logos.map((logo) => (
           <LogoItem key={logo.id} logo={logo} />
         ))}
