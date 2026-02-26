@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 interface HeaderProps {
   heroInView: boolean;
@@ -9,7 +10,7 @@ interface HeaderProps {
 export default function Header({ heroInView }: HeaderProps) {
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5 flex items-center transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-16 py-5 flex items-center justify-between transition-all duration-300"
       style={
         heroInView
           ? { background: "transparent" }
@@ -72,6 +73,16 @@ export default function Header({ heroInView }: HeaderProps) {
           priority
         />
       </div>
+
+      {/* Navigation */}
+      <nav className="flex items-center gap-6">
+        <Link
+          href="/blog"
+          className="text-sm text-white/60 hover:text-white transition-colors"
+        >
+          Blog
+        </Link>
+      </nav>
     </header>
   );
 }
