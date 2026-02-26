@@ -2,35 +2,69 @@
 
 import { useEffect, useState } from "react";
 
-const logos = [
-  { id: 1, name: "NEXUS", style: { fontWeight: 900, letterSpacing: "0.3em", fontSize: "1rem" } },
-  { id: 2, name: "ATLAS", style: { fontWeight: 700, letterSpacing: "0.2em", fontSize: "1.15rem" } },
-  { id: 3, name: "VERTEX", style: { fontWeight: 300, letterSpacing: "0.15em", fontSize: "1.3rem" } },
-  { id: 4, name: "MERIDIAN", style: { fontWeight: 900, letterSpacing: "0.05em", fontSize: "0.95rem" } },
-  { id: 5, name: "SIGNAL", style: { fontWeight: 700, letterSpacing: "0.35em", fontSize: "0.8rem" } },
-  { id: 6, name: "APEX", style: { fontWeight: 900, letterSpacing: "0.1em", fontSize: "1.3rem" } },
-  { id: 7, name: "FORGE", style: { fontWeight: 500, letterSpacing: "0.25em", fontSize: "1rem" } },
-  { id: 8, name: "PRISM", style: { fontWeight: 900, letterSpacing: "0.2em", fontSize: "0.95rem" } },
+const ALL_LOGOS = [
+  { id: "001", src: "/001_cba.svg",            alt: "CBA" },
+  { id: "002", src: "/002_qantas.svg",          alt: "Qantas" },
+  { id: "003", src: "/003_scentre.svg",         alt: "Scentre" },
+  { id: "004", src: "/004_toga.svg",            alt: "Toga" },
+  { id: "005", src: "/005_chapter.svg",         alt: "Chapter" },
+  { id: "006", src: "/006_yahoo.svg",           alt: "Yahoo" },
+  { id: "007", src: "/007_nab.svg",             alt: "NAB" },
+  { id: "008", src: "/008_eve.svg",             alt: "Eve" },
+  { id: "009", src: "/009_icare.svg",           alt: "iCare" },
+  { id: "010", src: "/010_searchfit.svg",       alt: "Searchfit" },
+  { id: "011", src: "/011_oss.svg",             alt: "OSS" },
+  { id: "012", src: "/012_nsw.svg",             alt: "NSW" },
+  { id: "013", src: "/013_westfield.svg",       alt: "Westfield" },
+  { id: "014", src: "/014_adina.svg",           alt: "Adina" },
+  { id: "015", src: "/015_abyadina.svg",        alt: "Aby Adina" },
+  { id: "016", src: "/016_liquidandlarder.svg", alt: "Liquid and Larder" },
 ];
 
-function LogoItem({ logo }: { logo: (typeof logos)[0] }) {
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+type Logo = (typeof ALL_LOGOS)[0];
+
+function LogoItem({ logo }: { logo: Logo }) {
   return (
-    <span className="select-none whitespace-nowrap text-white/25" style={logo.style}>
-      {logo.name}
-    </span>
+    <img
+      src={logo.src}
+      alt={logo.alt}
+      draggable={false}
+      style={{
+        height: "28px",
+        width: "auto",
+        filter: "brightness(0) invert(1)",
+        opacity: 0.28,
+        userSelect: "none",
+        flexShrink: 0,
+      }}
+    />
   );
 }
 
 export default function LogoCarousel() {
+  const [logos, setLogos] = useState<Logo[]>([]);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
+    setLogos(shuffleArray(ALL_LOGOS));
+
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReducedMotion(mq.matches);
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  if (!logos.length) return null;
 
   if (reducedMotion) {
     return (
