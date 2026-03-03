@@ -23,7 +23,12 @@ export default function Header({ heroInView }: HeaderProps) {
       }
     >
       {/* Desktop: morphing logo */}
-      <div className="relative hidden md:block" style={{ height: 52, width: 192 }}>
+      <Link
+        href="/"
+        aria-label="Thinker Maker – home"
+        className="relative hidden md:block focus:outline-none"
+        style={{ height: 52, width: 192 }}
+      >
         {/* Wordmark */}
         <div
           className="absolute inset-0 flex items-center transition-all duration-300 ease-in-out"
@@ -61,10 +66,10 @@ export default function Header({ heroInView }: HeaderProps) {
             priority
           />
         </div>
-      </div>
+      </Link>
 
       {/* Mobile: always Venn logomark */}
-      <div className="md:hidden">
+      <Link href="/" aria-label="Thinker Maker – home" className="md:hidden focus:outline-none">
         <Image
           src="/TM_logomark_wht.svg"
           alt="Thinker Maker"
@@ -72,7 +77,7 @@ export default function Header({ heroInView }: HeaderProps) {
           height={34}
           priority
         />
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex items-center gap-6">

@@ -15,13 +15,11 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-// Generate static paths for known posts
 export async function generateStaticParams() {
   const slugs: string[] = await client.fetch(postSlugsQuery);
   return slugs.map((slug) => ({ slug }));
 }
 
-// Dynamic metadata from the post
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await client.fetch(postBySlugQuery, { slug });
@@ -36,7 +34,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Portable Text components for rendering rich content
 const portableTextComponents = {
   types: {
     image: ({
@@ -44,18 +41,18 @@ const portableTextComponents = {
     }: {
       value: { asset: { _ref: string }; alt?: string; caption?: string };
     }) => (
-      <figure className="my-8">
-        <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-white/5">
+      <figure className="my-10">
+        <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-white/5">
           <Image
             src={urlFor(value).width(1200).height(675).url()}
             alt={value.alt || ""}
             fill
-            className="object-cover"
+            className="object-cover brightness-90"
             sizes="(max-width: 768px) 100vw, 720px"
           />
         </div>
         {value.caption && (
-          <figcaption className="mt-2 text-center text-sm text-white/40">
+          <figcaption className="mt-3 text-center text-xs text-white/35 tracking-wide">
             {value.caption}
           </figcaption>
         )}
@@ -82,7 +79,7 @@ const portableTextComponents = {
   },
   block: {
     h2: ({ children }: { children?: React.ReactNode }) => (
-      <h2 className="font-[family-name:var(--font-display)] text-3xl mt-12 mb-4">
+      <h2 className="font-display text-3xl mt-12 mb-4 leading-tight">
         {children}
       </h2>
     ),
@@ -93,12 +90,12 @@ const portableTextComponents = {
       <h4 className="font-semibold text-lg mt-8 mb-2">{children}</h4>
     ),
     blockquote: ({ children }: { children?: React.ReactNode }) => (
-      <blockquote className="border-l-2 border-white/20 pl-6 my-6 text-white/60 italic">
+      <blockquote className="border-l-2 border-white/20 pl-6 my-8 text-white/55 italic">
         {children}
       </blockquote>
     ),
     normal: ({ children }: { children?: React.ReactNode }) => (
-      <p className="text-white/70 leading-relaxed mb-5">{children}</p>
+      <p className="text-white/65 leading-relaxed mb-5">{children}</p>
     ),
   },
 };
@@ -115,23 +112,23 @@ export default async function PostPage({ params }: Props) {
     <>
       <Header heroInView={false} />
 
-      <article className="min-h-screen pt-28 pb-20 px-6 md:px-12 lg:px-16 max-w-3xl mx-auto">
+      <article className="min-h-screen pt-32 pb-24 px-6 md:px-12 lg:px-16 max-w-3xl mx-auto">
         {/* Back link */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-white/60 transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-white/35 hover:text-white/60 border border-white/[0.07] rounded-full px-4 py-2 transition-colors duration-200 mb-10"
         >
-          &larr; Back to blog
+          ← Back to blog
         </Link>
 
         {/* Categories */}
         {post.categories && post.categories.length > 0 && (
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-5">
             {post.categories.map(
               (cat: { title: string; slug: { current: string } }) => (
                 <span
                   key={cat.slug.current}
-                  className="text-xs uppercase tracking-wider text-white/40 border border-white/10 rounded-full px-3 py-1"
+                  className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-widest text-white/40"
                 >
                   {cat.title}
                 </span>
@@ -141,25 +138,25 @@ export default async function PostPage({ params }: Props) {
         )}
 
         {/* Title */}
-        <h1 className="font-[family-name:var(--font-display)] text-4xl md:text-5xl mb-4 leading-tight">
+        <h1 className="font-display text-4xl md:text-5xl mb-5 leading-tight">
           {post.title}
         </h1>
 
         {/* Meta */}
-        <div className="flex items-center gap-3 text-sm text-white/40 mb-8">
+        <div className="flex items-center gap-3 text-sm text-white/35 mb-10 pb-8 border-b border-white/[0.06]">
           {post.author?.image && (
             <Image
               src={urlFor(post.author.image).width(40).height(40).url()}
               alt={post.author.name}
-              width={32}
-              height={32}
-              className="rounded-full"
+              width={28}
+              height={28}
+              className="rounded-full opacity-70"
             />
           )}
           {post.author?.name && <span>{post.author.name}</span>}
           {post.publishedAt && (
             <>
-              <span>&middot;</span>
+              <span className="h-1 w-1 rounded-full bg-white/20 inline-block" />
               <time dateTime={post.publishedAt}>
                 {new Date(post.publishedAt).toLocaleDateString("en-AU", {
                   year: "numeric",
@@ -173,12 +170,12 @@ export default async function PostPage({ params }: Props) {
 
         {/* Featured image */}
         {post.featuredImage?.asset && (
-          <div className="relative aspect-[16/9] mb-10 rounded-lg overflow-hidden bg-white/5">
+          <div className="relative aspect-[16/9] mb-12 rounded-2xl overflow-hidden bg-white/5">
             <Image
               src={urlFor(post.featuredImage).width(1200).height(675).url()}
               alt={post.featuredImage.alt || post.title}
               fill
-              className="object-cover"
+              className="object-cover brightness-90"
               sizes="(max-width: 768px) 100vw, 720px"
               priority
             />
@@ -187,12 +184,10 @@ export default async function PostPage({ params }: Props) {
 
         {/* Body */}
         {post.body && (
-          <div className="prose-invert">
-            <PortableText
-              value={post.body}
-              components={portableTextComponents}
-            />
-          </div>
+          <PortableText
+            value={post.body}
+            components={portableTextComponents}
+          />
         )}
       </article>
 
