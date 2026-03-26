@@ -1,9 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { client } from "@/sanity/client";
-import { urlFor } from "@/sanity/image";
-import { postsQuery } from "@/sanity/queries";
+import { getAllPosts } from "@/lib/wordpress";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -15,22 +13,8 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-interface Post {
-  _id: string;
-  title: string;
-  slug: { current: string };
-  excerpt?: string;
-  publishedAt: string;
-  featuredImage?: {
-    asset: { _ref: string };
-    alt?: string;
-  };
-  author?: { name: string };
-  categories?: { title: string; slug: { current: string } }[];
-}
-
 export default async function BlogPage() {
-  const posts: Post[] = await client.fetch(postsQuery);
+  const posts = await getAllPosts();
 
   return (
     <>
@@ -61,19 +45,16 @@ export default async function BlogPage() {
           <div className="grid gap-6 md:grid-cols-2">
             {posts.map((post) => (
               <Link
-                key={post._id}
-                href={`/blog/${post.slug.current}`}
+                key={post.id}
+                href={`/blog/${post.slug}`}
                 className="group block rounded-2xl border border-white/[0.07] bg-white/[0.025] p-6 transition-colors duration-200 hover:border-white/[0.14] hover:bg-white/[0.045]"
               >
                 <article>
-                  {post.featuredImage?.asset && (
+                  {post.featuredImage && (
                     <div className="relative aspect-[16/9] mb-5 rounded-xl overflow-hidden bg-white/5">
                       <Image
-                        src={urlFor(post.featuredImage)
-                          .width(800)
-                          .height(450)
-                          .url()}
-                        alt={post.featuredImage.alt || post.title}
+                        src={post.featuredImage.url}
+                        alt={post.featuredImage.alt}
                         fill
                         className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -81,11 +62,11 @@ export default async function BlogPage() {
                     </div>
                   )}
 
-                  {post.categories && post.categories.length > 0 && (
+                  {post.categories.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-3">
                       {post.categories.map((cat) => (
                         <span
-                          key={cat.slug.current}
+                          key={cat.slug}
                           className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-0.5 text-xs uppercase tracking-widest text-white/40"
                         >
                           {cat.title}

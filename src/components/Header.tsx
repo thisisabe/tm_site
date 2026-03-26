@@ -80,11 +80,15 @@ export default function Header({ heroInView }: HeaderProps) {
       </Link>
 
       {/* Navigation */}
-      <nav className="flex items-center gap-6">
+      <nav className="flex items-center gap-4">
         <Link
           href="/blog"
-          className="text-sm text-white/60 hover:text-white transition-colors"
+          className="group relative inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-5 py-2 text-xs uppercase tracking-[0.15em] text-white/50 transition-all duration-300 hover:border-white/[0.18] hover:bg-white/[0.06] hover:text-white/90 hover:shadow-[0_0_20px_rgba(255,255,255,0.04)]"
         >
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40 opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/50 transition-colors duration-300 group-hover:bg-white/80" />
+          </span>
           Blog
         </Link>
       </nav>
